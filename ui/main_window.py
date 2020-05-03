@@ -1,3 +1,5 @@
+from tkinter import messagebox
+
 from logic.field import TetrisField
 from logic.tetris import Tetris
 from tkinter import *
@@ -15,7 +17,7 @@ class Keys:
 
 class TetrisUI(object):
     def __init__(self, game: Tetris):
-        self.timer_launched = False
+        self.game_over = False
         self.game = game
         self.root = Tk()
         self.mainframe = MainFrame(self.root, self.on_keypress, game)
@@ -28,34 +30,38 @@ class TetrisUI(object):
         self.root.mainloop()
 
     def start_timer(self):
-        self.timer_launched = True
+        self.game_over = False
         self.on_timer()
 
     def on_timer(self):
         self.tick()
-        if self.timer_launched:
+        if not self.game_over:
             self.root.after(1000, self.on_timer)
 
     def tick(self):
         self.game.step()
         self.redraw_game_state()
+        if self.game.is_over():
+            self.game_over = True
+            messagebox.showinfo("Game over!", "Your score: %d" % self.game.score)
 
     def redraw_game_state(self):
         self.mainframe.redraw(self.game)
 
     def on_keypress(self, event):
-        key = event.keysym_num
-        if key == Keys.Space:
-            self.game.touchdown()
-        elif key == Keys.Up:
-            self.game.rotate()
-        elif key == Keys.Down:
-            self.game.step()
-        elif key == Keys.Right:
-            self.game.move_right()
-        elif key == Keys.Left:
-            self.game.move_left()
-        self.redraw_game_state()
+        if not self.game_over:
+            key = event.keysym_num
+            if key == Keys.Space:
+                self.game.touchdown()
+            elif key == Keys.Up:
+                self.game.rotate()
+            elif key == Keys.Down:
+                self.game.step()
+            elif key == Keys.Right:
+                self.game.move_right()
+            elif key == Keys.Left:
+                self.game.move_left()
+            self.redraw_game_state()
 
 
 class MainFrame(Frame):
@@ -100,8 +106,9 @@ class MainFrame(Frame):
         self.drawer.draw_shape(game.get_shape_future(), game.field, transparent=True)
         self.drawer.draw_shape(game.current_shape, game.field)
 
-        game.next_shape.x = 0
+        next_shape = game.next_shape.clone()
+        next_shape.x = 0
         self.next_shape_drawer.clear()
-        self.next_shape_drawer.draw_shape(game.next_shape, TetrisField(4, 4))
+        self.next_shape_drawer.draw_shape(next_shape, TetrisField(4, 4))
 
         self.score_label_var.set("Score: %d" % game.score)

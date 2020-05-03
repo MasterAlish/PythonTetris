@@ -44,3 +44,6 @@ class Tetris(object):
     def random_shape(self):
         start_x = int(self.field.cols/2-1)
         return ShapeGenerator.random_shape(start_x)
+
+    def is_over(self):
+        return self.field.clashes_with(self.current_shape)
