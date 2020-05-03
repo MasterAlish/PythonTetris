@@ -1,6 +1,7 @@
 from tkinter import Canvas
 
 from logic.field import TetrisField
+from logic.shapes.shape import Shape
 
 
 def color(cell_color):
@@ -25,6 +26,18 @@ class TetrisDrawer(object):
             for row in range(self.rows)
         ]
 
+    def new_cell(self, canvas, col, row, cell_width, cell_height):
+        x = col * cell_width
+        y = row * cell_height
+        x2 = x + cell_width
+        y2 = y + cell_height
+
+        if col == self.cols - 1:
+            x2 -= 1
+        if row == self.rows - 1:
+            y2 -= 1
+        return self.canvas.create_rectangle(x, y, x2, y2, outline="#2d356f", width=2, fill="#2d356f")
+
     def clear(self):
         pass
 
@@ -38,14 +51,14 @@ class TetrisDrawer(object):
                 else:
                     self.canvas.itemconfig(cell, fill="#2d356f")
 
-    def new_cell(self, canvas, col, row, cell_width, cell_height):
-        x = col * cell_width
-        y = row * cell_height
-        x2 = x + cell_width
-        y2 = y + cell_height
-
-        if col == self.cols - 1:
-            x2 -= 1
-        if row == self.rows - 1:
-            y2 -= 1
-        return self.canvas.create_rectangle(x, y, x2, y2, outline="#2d356f", width=2, fill="#2d356f")
+    def draw_shape(self, shape: Shape, field: TetrisField):
+        for row in range(shape.size):
+            for col in range(shape.size):
+                shape_cell_color = shape.cells[row][col]
+                if shape_cell_color:
+                    cell = self.cells[shape.y + row][shape.x + col]
+                    cell_color = field.cells[row][col]
+                    if shape_cell_color:
+                        self.canvas.itemconfig(cell, fill=color(shape_cell_color))
+                    elif cell_color:
+                        self.canvas.itemconfig(cell, fill=color(cell_color))

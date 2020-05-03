@@ -14,18 +14,33 @@ class Keys:
 
 class TetrisUI(object):
     def __init__(self, game: Tetris):
+        self.timer_launched = False
         self.game = game
         self.root = Tk()
         self.mainframe = MainFrame(self.root, self.on_keypress, game)
 
     def show(self):
+        self.start_timer()
         self.root.title("Tetris 2020")
         self.root.geometry("500x600")
         self.root.resizable(0, 0)
         self.root.mainloop()
 
+    def start_timer(self):
+        self.timer_launched = True
+        self.on_timer()
+
+    def on_timer(self):
+        self.tick()
+        if self.timer_launched:
+            self.root.after(1000, self.on_timer)
+
+    def tick(self):
+        self.game.step()
+        self.redraw_game_state()
+
     def redraw_game_state(self):
-        self.mainframe.redraw(self.game.field)
+        self.mainframe.redraw(self.game.field, self.game.current_shape)
 
     def on_keypress(self, event):
         key = event.keysym_num
@@ -34,7 +49,7 @@ class TetrisUI(object):
         elif key == Keys.Up:
             self.game.rotate()
         elif key == Keys.Down:
-            self.game.touchdown()
+            self.game.step()
         elif key == Keys.Right:
             self.game.move_right()
         elif key == Keys.Left:
@@ -67,6 +82,7 @@ class MainFrame(Frame):
     def init_keyboard(self):
         self.root.bind("<Key>", self.on_keypress)
 
-    def redraw(self, field):
+    def redraw(self, field, shape):
         self.drawer.clear()
         self.drawer.draw(field)
+        self.drawer.draw_shape(shape, field)
