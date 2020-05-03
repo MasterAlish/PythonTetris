@@ -1,13 +1,11 @@
-from random import randint
 from tkinter import Canvas
 
 from logic.field import TetrisField
 
 
-def color():
-    colors = ["#F00", "#FF0", "#FF4", "#0FF", "#0F0", "#00F"]
-    r = randint(0, len(colors) - 1)
-    return colors[r]
+def color(cell_color):
+    colors = ["#58d3df", "#d04a74", "#9d08c8", "#f6c983", "#e88071", "#27cf7b"]
+    return colors[cell_color % len(colors)]
 
 
 class TetrisDrawer(object):
@@ -34,7 +32,11 @@ class TetrisDrawer(object):
         for row in range(field.rows):
             for col in range(field.cols):
                 cell = self.cells[row][col]
-                self.canvas.itemconfig(cell, fill=color())
+                cell_color = field.cells[row][col]
+                if cell_color:
+                    self.canvas.itemconfig(cell, fill=color(cell_color))
+                else:
+                    self.canvas.itemconfig(cell, fill="#2d356f")
 
     def new_cell(self, canvas, col, row, cell_width, cell_height):
         x = col * cell_width
@@ -46,4 +48,4 @@ class TetrisDrawer(object):
             x2 -= 1
         if row == self.rows - 1:
             y2 -= 1
-        return self.canvas.create_rectangle(x, y, x2, y2, outline="#444", fill="#FFF")
+        return self.canvas.create_rectangle(x, y, x2, y2, outline="#2d356f", width=2, fill="#2d356f")
