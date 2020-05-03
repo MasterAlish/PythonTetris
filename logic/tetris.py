@@ -11,17 +11,20 @@ class Tetris(object):
     def step(self):
         if self.current_shape.can_move_down(self.field):
             self.current_shape.move_down(self.field)
+            return True
         else:
             self.field.freeze(self.current_shape)
             self.current_shape = self.next_shape
             self.next_shape = self.random_shape()
+            return False
 
     def can_go_down(self, current_shape):
         shape_bottom_y = current_shape.y + current_shape.size
         return shape_bottom_y < self.field.rows
 
     def touchdown(self):
-        pass
+        while self.step():
+            pass
 
     def rotate(self):
         self.current_shape.rotate(self.field)
