@@ -1,3 +1,4 @@
+from logic.field import TetrisField
 from logic.tetris import Tetris
 from tkinter import *
 
@@ -40,7 +41,7 @@ class TetrisUI(object):
         self.redraw_game_state()
 
     def redraw_game_state(self):
-        self.mainframe.redraw(self.game.field, self.game.current_shape)
+        self.mainframe.redraw(self.game)
 
     def on_keypress(self, event):
         key = event.keysym_num
@@ -63,7 +64,10 @@ class MainFrame(Frame):
         self.root = root
         self.game_panel = None
         self.info_panel = None
+        self.score_label_var = None
+        self.next_shape_panel = None
         self.drawer = None
+        self.next_shape_drawer = None
         self.on_keypress = on_keypress
         self.init_ui(game)
         self.init_keyboard()
@@ -77,12 +81,26 @@ class MainFrame(Frame):
         self.info_panel = Frame(self, bg="#EEE")
         self.info_panel.pack(anchor=N, fill=BOTH, expand=TRUE, side=LEFT)
 
+        self.score_label_var = StringVar(value="Score: 0")
+        score_label = Label(self.info_panel, bg="#EEE", textvariable=self.score_label_var)
+        score_label.pack()
+
+        self.next_shape_panel = Canvas(self.info_panel, bg="#FFF", width=100, height=100, bd=0, highlightthickness=0, relief='ridge')
+        self.next_shape_panel.pack()
+
         self.drawer = TetrisDrawer(self.game_panel, 300, 600, game.field)
+        self.next_shape_drawer = TetrisDrawer(self.next_shape_panel, 100, 100, TetrisField(4, 4))
 
     def init_keyboard(self):
         self.root.bind("<Key>", self.on_keypress)
 
-    def redraw(self, field, shape):
+    def redraw(self, game: Tetris):
         self.drawer.clear()
-        self.drawer.draw(field)
-        self.drawer.draw_shape(shape, field)
+        self.drawer.draw(game.field)
+        self.drawer.draw_shape(game.current_shape, game.field)
+
+        game.next_shape.x = 0
+        self.next_shape_drawer.clear()
+        self.next_shape_drawer.draw_shape(game.next_shape, TetrisField(4, 4))
+
+        self.score_label_var.set("Score: %d" % game.score)

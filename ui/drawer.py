@@ -39,7 +39,10 @@ class TetrisDrawer(object):
         return self.canvas.create_rectangle(x, y, x2, y2, outline="#2d356f", width=2, fill="#2d356f")
 
     def clear(self):
-        pass
+        for row in range(self.rows):
+            for col in range(self.cols):
+                cell = self.cells[row][col]
+                self.canvas.itemconfig(cell, fill="#2d356f")
 
     def draw(self, field: TetrisField):
         for row in range(field.rows):

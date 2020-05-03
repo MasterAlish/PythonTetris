@@ -7,6 +7,7 @@ class Tetris(object):
         self.field = TetrisField(cols, rows)
         self.next_shape = self.random_shape()
         self.current_shape = self.random_shape()
+        self.score = 0
 
     def step(self):
         if self.current_shape.can_move_down(self.field):
@@ -16,6 +17,8 @@ class Tetris(object):
             self.field.freeze(self.current_shape)
             self.current_shape = self.next_shape
             self.next_shape = self.random_shape()
+            lines = self.field.explode()
+            self.score += lines * lines * 10
             return False
 
     def can_go_down(self, current_shape):

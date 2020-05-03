@@ -14,6 +14,25 @@ class TetrisField(object):
                 if shape_cell_color:
                     self.cells[shape.y + row][shape.x + col] = shape_cell_color
 
+    def explode(self):
+        rows_to_remove = []
+        for row in range(self.rows):
+            if all(map(lambda x: x > 0, self.cells[row])):
+                rows_to_remove.append(row)
+
+        for row in rows_to_remove:
+            self.remove_row(row)
+
+        return len(rows_to_remove)
+
+    def remove_row(self, row):
+        for col in range(self.cols):
+            self.cells[row][col] = 0
+
+        for y in range(row, 0, -1):
+            for col in range(self.cols):
+                self.cells[y][col] = self.cells[y-1][col]
+
     def clashes_with(self, shape):
         for row in range(shape.size):
             for col in range(shape.size):
