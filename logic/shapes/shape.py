@@ -45,5 +45,11 @@ class Shape(object):
         clone.cells = [[self.cells[y][x] for x in range(self.size)] for y in range(self.size)]
         return clone
 
+    def get_future(self, field: TetrisField):
+        future = self.clone()
+        while future.can_move_down(field):
+            future.move_down(field)
+        return future
+
     def _rotate_cells(self):
         self.cells = [list(r) for r in zip(*self.cells[::-1])]

@@ -97,6 +97,7 @@ class MainFrame(Frame):
     def redraw(self, game: Tetris):
         self.drawer.clear()
         self.drawer.draw(game.field)
+        self.drawer.draw_shape(game.get_shape_future(), game.field, transparent=True)
         self.drawer.draw_shape(game.current_shape, game.field)
 
         game.next_shape.x = 0

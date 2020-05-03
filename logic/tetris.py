@@ -38,6 +38,9 @@ class Tetris(object):
     def move_left(self):
         self.current_shape.move_left(self.field)
 
+    def get_shape_future(self):
+        return self.current_shape.get_future(self.field)
+
     def random_shape(self):
         start_x = int(self.field.cols/2-1)
         return ShapeGenerator.random_shape(start_x)

@@ -54,7 +54,7 @@ class TetrisDrawer(object):
                 else:
                     self.canvas.itemconfig(cell, fill="#2d356f")
 
-    def draw_shape(self, shape: Shape, field: TetrisField):
+    def draw_shape(self, shape: Shape, field: TetrisField, transparent=False):
         for row in range(shape.size):
             for col in range(shape.size):
                 shape_cell_color = shape.cells[row][col]
@@ -62,6 +62,9 @@ class TetrisDrawer(object):
                     cell = self.cells[shape.y + row][shape.x + col]
                     cell_color = field.cells[row][col]
                     if shape_cell_color:
-                        self.canvas.itemconfig(cell, fill=color(shape_cell_color))
+                        if not transparent:
+                            self.canvas.itemconfig(cell, fill=color(shape_cell_color))
+                        else:
+                            self.canvas.itemconfig(cell, fill="#37407f")
                     elif cell_color:
                         self.canvas.itemconfig(cell, fill=color(cell_color))
