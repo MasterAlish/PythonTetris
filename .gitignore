@@ -1,0 +1,9 @@
+.idea/**
+.idea/
+env/**
+logs/**
+env/
+*.pyc
+.DS_Store
+*.note
+*.log
